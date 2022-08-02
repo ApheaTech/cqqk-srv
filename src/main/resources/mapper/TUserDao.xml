@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aphea.cqqksrv.dao.TUserDao">
+    <!--<select id="getAllUserEx" resultType="com.aphea.cqqksrv.entity.ex.TUserEx">-->
+    <!--    select u.*, o.ORG_NAME, o.FULL_ORG_NAME from t_user u, t_org o where u.ORG_ID=o.ORG_ID-->
+    <!--</select>-->
+    <resultMap id="UserVO" type="com.aphea.cqqksrv.entity.vo.UserVO">
+        <id column="userId" property="userId"/>
+        <result column="userName" property="userName"/>
+        <result column="userNickName" property="userNickName"/>
+        <result column="userTel" property="userTel"/>
+        <result column="sex" property="sex"/>
+        <result column="orgId" property="orgId"/>
+        <result column="fullOrgName" property="fullOrgName"/>
+        <result column="orgName" property="orgName"/>
+        <collection property="roleList" ofType="com.aphea.cqqksrv.entity.vo.RoleVO">
+            <result column="roleId" property="roleId"/>
+            <result column="roleName" property="roleName"/>
+            <result column="parentRoleId" property="parentRoleId"/>
+            <result column="parentRoleName" property="parentRoleName"/>
+        </collection>
+    </resultMap>
+    <select id="getUserByUserTel" resultMap="UserVO">
+        select u.USER_ID userId, u.USER_NAME userName, u.USER_TEL userTel,
+               u.USER_NICKNAME userNickName, u.USER_SEX sex,
+               o.FULL_ORG_NAME fullOrgName, o.ORG_NAME orgName,
+               o.ORG_ID orgId, r.ROLE_ID roleId, r.ROLE_NAME roleName,
+               r.PARENT_ROLE_ID parentRoleId, r2.ROLE_NAME parentRoleName
+        from t_user u, t_org o, t_role r left join t_role r2 on r.PARENT_ROLE_ID=r2.ROLE_ID, t_user_role ur
+        where u.ORG_ID=o.ORG_ID and u.USER_ID=ur.USER_ID and ur.ROLE_ID=r.ROLE_ID
+          and u.USER_TEL=#{userTel}
+    </select>
+</mapper>

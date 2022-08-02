@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aphea.cqqksrv.dao.CarInfoDao">
+
+    <select id="selectListPageByWorkAreaOrgId" resultType="com.aphea.cqqksrv.entity.vo.CarInfoVO">
+        select c.*, o.ORG_NAME deptName, p.PROP_LOGIC_NAME, d.NAME driverName
+        from car_info c
+                 left join t_org o on c.DEPT_ID = o.ORG_ID
+                 left join car_driver cd on c.ID = cd.CAR_ID
+                 left join driver_info d on cd.DRIVER_ID = d.ID
+                 left join t_prop_cfg p on c.CLASS_ID = p.PROP_VALUE
+        where o.LEVEL = #{workAreaOrgId}
+        limit #{currentPage}, #{pageSize}
+    </select>
+    <select id="countByWorkAreaOrgId" resultType="java.lang.Integer">
+        select count(*)
+        from car_info c
+                 left join t_org o on c.DEPT_ID = o.ORG_ID
+        where o.LEVEL = #{workAreaOrgId}
+    </select>
+</mapper>
